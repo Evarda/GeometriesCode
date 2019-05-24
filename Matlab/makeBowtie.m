@@ -45,10 +45,10 @@ trianglePixels = ~trianglePixels;
 trianglePixels = potential*trianglePixels + bias*leftside;
 
 
-% circlePixels is a 2D "logical" array.
+% trianglePixels is a 2D logical array.
 % Now, comment/uncomment to display it.
-imagesc(transpose(trianglePixels)) ;
-title('Bowtie');
-colorbar
+% imagesc(transpose(trianglePixels)) ;
+% title(['Bowtie with a gap of ' num2str(separation) ' pixels, a bias of ' num2str(bias) ', and a surrounding potential of ' num2str(potential)]);
+% colorbar
 end
 
