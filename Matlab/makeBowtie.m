@@ -1,22 +1,23 @@
-function trianglePixels = makeBowtie(imageSizeX, imageSizeY, separation, bias)
-%UNTITLED Summary of this function goes here
+function trianglePixels = makeBowtie(bowtieSizeX, bowtieSizeY, separation, bias, potential)
+% Given a bowtie size, a gap size, and a potential bias,
+% bowtieSizeY = total height  of 1 triangle
+% bowtieSizeX = total width of 2 triangles
+% separation  = distance between triangle tips (gap size)
+% bias = height of one triangle with respect to the other
+% Outputs an array of potentials
 
-% Create a logical image of a circle with specified
-% diameter, center, and image size.
-% First create the image.
-% imageSizeX = 1000;
-% imageSizeY = 1000;
+% Make and Mesh Grid of 1-triangle height by (2-triangle width + gap size)
+[columnsInImage, rowsInImage] = meshgrid(1:bowtieSizeY, 1:(bowtieSizeX+separation));
 
-[columnsInImage, rowsInImage] = meshgrid(1:imageSizeY, 1:(imageSizeX+separation));
+% Define the Center of the Image
+centerX = (bowtieSizeX+separation)/2;
+centerY = bowtieSizeY/2;
 
-% Next create the circle in the image.
-centerX = (imageSizeX+separation)/2;
-centerY = imageSizeY/2;
+% Re-define height and width
+height = bowtieSizeY;
+width = bowtieSizeX;
 
-width = imageSizeX;
-height = imageSizeY;
-% separation = 30;
-
+% Define important quantitites for lines
 shiftedcenterx = (centerX-(width+separation)/2);
 miny = (centerY-height/2);
 maxy = (centerY+height/2);
@@ -24,42 +25,30 @@ slope = ((height)/width);
 shiftedrows = (rowsInImage-centerX);
 shiftedcols = (columnsInImage-centerY);
 
-% trianglePixels1 = ((shiftedcols <=  slope.*(shiftedrows-separation/2)) & ...
-%                   (shiftedcols >= -slope.*(shiftedrows-separation/2)) & ...
-%                   (shiftedrows <=  (width+separation)/2));
-% trianglePixels2 = ((shiftedcols >=  slope.*(shiftedrows+separation/2)) & ...
-%                   (shiftedcols <= -slope.*(shiftedrows+separation/2)) & ...
-%                   (shiftedrows >= -(width+separation)/2));
-%               
-% trianglePixels = trianglePixels1 + trianglePixels2
+% Makes a Logical Array of 1's in left triangle, 0's otw
+leftside  = ((shiftedcols <=  slope.*(shiftedrows-separation/2)) & ...
+             (shiftedcols >= -slope.*(shiftedrows-separation/2)) & ...
+             (shiftedrows <=  (width+separation)/2));
 
-trianglePixels = ((shiftedcols <=  slope.*(shiftedrows-separation/2)) & ...
-                  (shiftedcols >= -slope.*(shiftedrows-separation/2)) & ...
-                  (shiftedrows <=  (width+separation)/2)) | ...
-                 ((shiftedcols >=  slope.*(shiftedrows+separation/2)) & ...
-                  (shiftedcols <= -slope.*(shiftedrows+separation/2)) & ...
-                  (shiftedrows >= -(width+separation)/2));
-              
-leftside = ((shiftedcols <=  slope.*(shiftedrows-separation/2)) & ...
-            (shiftedcols >= -slope.*(shiftedrows-separation/2)) & ...
-            (shiftedrows <=  (width+separation)/2));
+% Makes a Logical Array of 1's in right triangle, 0's otw 
+rightside = ((shiftedcols >=  slope.*(shiftedrows+separation/2)) & ...
+             (shiftedcols <= -slope.*(shiftedrows+separation/2)) & ...
+             (shiftedrows >= -(width+separation)/2));
 
+% Makes a Logical Array of 1's in triangles, 0's otw 
+trianglePixels = leftside + rightside;
 
-             
-trianglePixels = ~trianglePixels+(bias.*(~leftside));
-    
-              
-              
-%((rowsInImage - centerY).^2 ...
-%    + (columnsInImage - centerX).^2 <= radius.^2) & ((rowsInImage - centerY).^2 ...
-%    + (columnsInImage - centerX).^2 >= radius2.^2);
+% Inverts the triangle array, making values in triangles 0
+trianglePixels = ~trianglePixels;
+
+% Scales outer potential and adds bias to Left Triangle
+trianglePixels = potential*trianglePixels + bias*leftside;
+
 
 % circlePixels is a 2D "logical" array.
-% Now, display it.
-% image(transpose(trianglePixels)) ;
-% ax = gca;
-% ax.DataAspectRatio = [1 1 1];
-% colormap([0 0 0; 1 1 1]);
-% title('Binary image of a circle');
+% Now, comment/uncomment to display it.
+imagesc(transpose(trianglePixels)) ;
+title('Bowtie');
+colorbar
 end
 
