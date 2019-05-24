@@ -18,12 +18,15 @@ Repository for the codes I use to make geometries
 - bias = height of one triangle with respect to the other
 
 
-This will give an array with a bowtie shape where values in the bowtie are 0 and the surrounding space are 1
+An array with a bowtie shape where values in the bowtie are 0 and the surrounding space are 1 
+can be written as:
 
 `makeBowtie(bowtieSizeX, bowtieSizeY, separation, 0, 1)`
 
+#### Example
 
- 
+`makeBowtie(1000, 1000, 100, 10, 20)`
+
 ![alt text][makeBowtieExample]
 
 [makeBowtieExample]: Matlab/makeBowtieExample.jpg "makeBowtie Example"
